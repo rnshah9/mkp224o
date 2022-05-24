@@ -1,5 +1,7 @@
 project: rnshah9/mkp224o
 target: mkp224o
+image: ghcr.io/rnshah9/playground:mkp224o
 
 cmds:
   - cmd: /mkp224o/mkp224o -Y @@
+    filepath: test.yaml
