@@ -1,4 +1,4 @@
-FROM alpine:3.12.0
+FROM alpine:3.12.0 as builder
 
 #Installing all the dependencies
 RUN apk add --no-cache gcc libsodium-dev make autoconf build-base
@@ -11,3 +11,12 @@ RUN ./autogen.sh \
   && ./configure \
   && make \
   && cp /mkp224o/mkp224o /usr/local/bin/
+
+RUN mkdir -p /deps
+RUN ldd /mkp224o/mkp224o | tr -s '[:blank:]' '\n' | grep '^/' | xargs -I % sh -c 'cp % /deps;'
+
+FROM alpine:3.12.0 as package
+
+COPY --from=builder /deps /deps
+COPY --from=builder /mkp224o/mkp224o /mkp224o/mkp224o
+ENV LD_LIBRARY_PATH=/deps
