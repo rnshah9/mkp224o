@@ -2,5 +2,4 @@ project: mkp224o
 target: mkp224o
 
 cmds:
-  - cmd: /mkp224o/mkp224o -Y test.yaml
-    filepath: test.yaml
+  - cmd: /mkp224o -Y @@
