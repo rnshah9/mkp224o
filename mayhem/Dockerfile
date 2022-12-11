@@ -1,7 +1,8 @@
-FROM alpine:3.12.0 as builder
+FROM ubuntu:22.04 as builder
 
 #Installing all the dependencies
-RUN apk add --no-cache gcc libsodium-dev make autoconf build-base
+RUN apt update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y gcc libsodium-dev make autoconf build-essential clang
 
 WORKDIR /mkp224o
 
@@ -12,6 +13,10 @@ RUN ./autogen.sh \
   && make \
   && cp /mkp224o/mkp224o /usr/local/bin/
 
-FROM alpine:3.12.0 as package
-RUN apk add --no-cache libsodium-dev
+RUN clang++ /mkp224o/mayhem/fuzz_base64_valid.cpp -fsanitize=fuzzer,address /mkp224o/base64_from.c.o /mkp224o/base64_to.c.o -o /fuzz
+
+FROM ubuntu:22.04 as package
+RUN apt update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libsodium-dev
 COPY --from=builder /mkp224o/mkp224o /
+COPY --from=builder /fuzz /fuzz_base64_valid

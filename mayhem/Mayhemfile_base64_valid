@@ -1,0 +1,6 @@
+project: mkp224o
+target: base64-valid
+
+cmds:
+  - cmd: /fuzz_base64_valid
+    libfuzzer: true
